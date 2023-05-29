@@ -207,11 +207,17 @@ RenderEngine *RenderEngineManager::Engine(const std::string &_name,
   EngineInfo info{_name, nullptr};
   std::lock_guard<std::recursive_mutex> lock(this->dataPtr->enginesMutex);
   // check in the list of available engines
+  
   auto iter = this->dataPtr->engines.find(_name);
+  for (auto p: this->dataPtr->engines) {
+    ignerr << "MIRKO1 "<<p.first<<std::endl;  
+  }
+  ignerr << "MIRKO1 "<<_name<<std::endl;
   if (iter != this->dataPtr->engines.end())
   {
     info.name = iter->first;
     info.engine = iter->second;
+    ignerr << "MIRKO1 "<<info.name<<" "<<info.engine<<std::endl;
   }
 
   return this->dataPtr->Engine(info, _params, _path);
@@ -369,6 +375,7 @@ RenderEngine *RenderEngineManagerPrivate::Engine(EngineInfo _info,
       libName = defaultIt->second;
 
     // Load the engine plugin
+    ignerr<<"MIRKO2 "<<libName<<" "<<_path<<std::endl;
     if (this->LoadEnginePlugin(libName, _path))
     {
       std::lock_guard<std::recursive_mutex> lock(this->enginesMutex);
@@ -440,7 +447,8 @@ bool RenderEngineManagerPrivate::LoadEnginePlugin(
     const std::string &_filename, const std::string &_path)
 {
   ignmsg << "Loading plugin [" << _filename << "]" << std::endl;
-
+  ignerr << "MIRKO4 "<<this->pluginPathEnv<<" " <<std::string(IGN_RENDERING_PLUGIN_PATH)<<
+  " "<< IGNITION_RENDERING_ENGINE_INSTALL_DIR <<" "<<_filename<<std::endl;
   ignition::common::SystemPaths systemPaths;
   systemPaths.SetPluginPathEnv(this->pluginPathEnv);
 
